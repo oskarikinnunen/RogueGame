@@ -14,8 +14,8 @@ namespace Rogue
         private GraphicsDeviceManager graphics;
         private SpriteBatch spriteBatch;
         private static ContentManager content2;
-        private AnimatedTexture2D dudeAnim;
-        private Texture2D dudeSpr;
+        private AnimatedTexture2D playerAnim;
+        private GameObject player;
 
         public static WorldScene LoadedWorldScene;
         public static ContentManager Content2 { get => content2; set => content2 = value; }
@@ -35,6 +35,7 @@ namespace Rogue
         protected override void Initialize()
         {
             // TODO: Add your initialization logic here
+            //ContentHelper.Initialize();
             AnimationEngine.Initialize();
             base.Initialize();
         }
@@ -45,17 +46,21 @@ namespace Rogue
         /// </summary>
         protected override void LoadContent()
         {
-            // Create a new SpriteBatch, which can be used to draw textures.
-            spriteBatch = new SpriteBatch(GraphicsDevice);
-            AnimationEngine.SpriteBatch = spriteBatch;
-            Camera.Primary = new Camera(spriteBatch, 1f);
-            dudeSpr = Content.Load<Texture2D>("blobman3");
-            dudeAnim = new AnimatedTexture2D(dudeSpr, 32);
-
-            LoadedWorldScene = WorldGenerator.GeneratePlain(new Vector2(100f, 100f));
+            ContentHelper.Initialize();
             ContentHelper.LoadTerrainTextures(Content);
+            
+            spriteBatch = new SpriteBatch(GraphicsDevice); // Create a new SpriteBatch, which can be used to draw textures. 
+            AnimationEngine.SpriteBatch = spriteBatch;
 
-            GameObject go = new GameObject(Vector2.Zero, dudeAnim);
+            LoadedWorldScene = WorldGenerator.GeneratePlain(new Vector2(100f, 100f)); //Needs to be added before any gameobjects since they are added to LoadedWorldScene
+
+            Texture2D playerSprite = Content.Load<Texture2D>("HeroSheet1");
+            playerAnim = new AnimatedTexture2D(playerSprite, 32);
+            playerAnim.PingPong = true;
+            player = new GameObject(new Vector2(50, 50) * 32, playerAnim);
+
+            Camera.Primary = new Camera(spriteBatch, graphics.GraphicsDevice.Viewport);
+            Camera.Primary.Follow(player);
         }
 
         /// <summary>
@@ -74,13 +79,38 @@ namespace Rogue
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Update(GameTime gameTime)
         {
+            Input.Update(Keyboard.GetState());
+
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
                 Exit();
+          
+            if (Input.KeyPushed(Keys.Left)) {       //TODO: Make a CheckInput method
+                player.Position += new Vector2(-32f, 0f);
+            }
+            else if (Input.KeyPushed(Keys.Right))
+            {
+                player.Position += new Vector2(+32f, 0f);
+            }
+            else if (Input.KeyPushed(Keys.Up))
+            {
+                player.Position += new Vector2(0f, -32f);
+            }
+            else if (Input.KeyPushed(Keys.Down))
+            {
+                player.Position += new Vector2(0f, +32f);
+            }
 
-            // TODO: Add your update logic here
+            if (Input.KeyPushed(Keys.Z))
+            {
+                Camera.Primary.Zoom -= 0.5f;
+            }
+
+            if (Input.KeyPushed(Keys.X))
+            {
+                Camera.Primary.Zoom += 0.5f;
+            }
 
             base.Update(gameTime);
-            //Debug.WriteLine(gameTime.TotalGameTime.TotalSeconds);
         }
 
         /// <summary>
@@ -89,15 +119,18 @@ namespace Rogue
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Draw(GameTime gameTime)
         {
-            //GraphicsDevice.Clear(Color.CornflowerBlue);
-            spriteBatch.Begin();
-            AnimationEngine.Update(gameTime);
+
+            GraphicsDevice.Clear(Color.Black);
+
+            spriteBatch.Begin(SpriteSortMode.FrontToBack,BlendState.AlphaBlend,SamplerState.PointClamp,null,RasterizerState.CullCounterClockwise,null,Camera.Primary.TransformMatrix);
+
+            Camera.Primary.DrawTerrain();
+            playerAnim.Draw();
 
             spriteBatch.End();
 
-            // TODO: Add your drawing code here
-
             base.Draw(gameTime);
+            AnimationEngine.Update(gameTime); //Pass the gametime to the AnimationEngine which then determines if any animation frames need to be advanced
         }
 
     }

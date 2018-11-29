@@ -13,13 +13,10 @@ namespace Rogue
 
         public List<Component> Components;
 
-        public Vector2 Position
-        {
-            get { return position; }
-            set { position = value; }
-        }
+        public Vector2 Position { get => position; set => position = value; }
 
-        public GameObject (Vector2 position) {
+        public GameObject (Vector2 position)
+        {
             Components = new List<Component>();
             this.position = position;
             RogueGame.LoadedWorldScene.AddGameObject(this);
@@ -27,10 +24,12 @@ namespace Rogue
 
         public GameObject(Vector2 position, Component component1)
         {
-            Components = new List<Component>();
             this.position = position;
+
+            Components = new List<Component>();            
             this.Components.Add(component1);
-            Console.WriteLine(component1.GetType().ToString());
+            component1.OnAddToGameObject(this);
+            
             RogueGame.LoadedWorldScene.AddGameObject(this);
         }
 
@@ -54,7 +53,7 @@ namespace Rogue
 
     }
 
-    public abstract class Component
+    public abstract class Component //TODO: Move to own file
     {
         public abstract GameObject WorldObject { get; set; }
 

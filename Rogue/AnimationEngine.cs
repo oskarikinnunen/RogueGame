@@ -16,7 +16,7 @@ namespace Rogue
         private static List<AnimatedTexture2D> animatedTextures;
         private static GameTime gameTime;
         private static SpriteBatch spriteBatch;
-        private static float defaultPlaybackSpeed = 3f;
+        private static float defaultPlaybackSpeed = 1.4f;
         private static float playbackSpeed;
 
         public static SpriteBatch SpriteBatch { get => spriteBatch; set => spriteBatch = value; }

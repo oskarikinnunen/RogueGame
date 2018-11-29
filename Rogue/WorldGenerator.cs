@@ -3,6 +3,8 @@ using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
+using LibNoise;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -37,22 +39,41 @@ namespace Rogue
 
     public static class ContentHelper
     {
+        private static List<Terrain> terrains;
+
+        public static void Initialize ()
+        {
+            terrains = new List<Terrain>{new Terrain(TerrainType.Stone, "Terrain/Grass1"), //TODO: Do anything else than this
+                                         new Terrain(TerrainType.Grass, "Terrain/Grass2"),
+                                         new Terrain(TerrainType.Void, "Terrain/Stone1") };
+        }
+
         public static List<Terrain> Terrains
         {
             get
             {
-                List<Terrain> terrains = new List<Terrain>{new Terrain(TerrainType.Stone, "Terrain/Stone0"),
-                                                           new Terrain(TerrainType.Grass, "Terrain/Grass0"),
-                                                           new Terrain(TerrainType.Void, "Terrain/Void0") };
                 return terrains;
             }
         }
 
+        public static Texture2D TerrainTexture(TerrainType terrainType)
+        {
+            for (int i = 0; i <= terrains.Count; i++)
+            {
+                if (terrains[i].TerrainType == terrainType)
+                {
+                    return terrains[i].Texture2D;
+                }
+            }
+            return null;
+        }
+
         public static void LoadTerrainTextures(ContentManager contentManager)
         {
-            for (int i = 0; i <= Enum.GetNames(typeof(TerrainType)).Length; i++)
+            for (int i = 0; i < Enum.GetNames(typeof(TerrainType)).Length; i++)
             {
-                ContentHelper.Terrains[i].Texture2D = contentManager.Load<Texture2D>(Terrains[i].Path);
+                terrains[i].Texture2D = contentManager.Load<Texture2D>(terrains[i].Path);
+                Debug.WriteLine(i);
             }
         }
     }
@@ -63,23 +84,25 @@ namespace Rogue
         {
             Terrain[,] terrain = new Terrain[(int)size.X, (int)size.Y];
             WorldScene worldScene = new WorldScene(size);
-
-            for (int x = 0; x < size.X; x++)
+            Perlin perl = new Perlin(3.2,noiseQuality: NoiseQuality.High);
+            
+            for (int x = 0; x < terrain.GetLength(0); x++)
             {
-                for (int y = 0; y < size.Y; y++)
+                for (int y = 0; y < terrain.GetLength(1); y++)
                 {
-                    terrain[x, y] = RandomTerrain();
-                }               
+                    terrain[x, y] = ContentHelper.Terrains[(int)(perl.GetValue((int)x, (int)y, 0.0) + 1.0)];
+                    terrain[x, y].Texture2D = ContentHelper.TerrainTexture(terrain[x, y].TerrainType);
+                }
             }
             worldScene.SetTerrain(terrain);
-            // TODO: For each unique terrain type, load the texture2d for the Terrain class. Use it in Camera for rendering the terrain.
             return worldScene;
         }
 
         private static Terrain RandomTerrain ()
         {
-            Random random = new Random(20);
-            return ContentHelper.Terrains[random.Next(0, ContentHelper.Terrains.Count)];
+            Random randomseed = new Random();
+            Random random = new Random();
+            return ContentHelper.Terrains[random.Next(0, 2)];
         }
 
         

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
@@ -7,28 +8,27 @@ namespace Rogue
     public class Camera
     {
         private float zoom;
-        private Rectangle rectangle;
         private GameObject followable;
         private SpriteBatch spriteBatch;
         private Viewport viewport;
         
-        public float Zoom { get { return zoom; } set { zoom = value; } }
+        public float Zoom { get => zoom; set => zoom = value; }
         public Vector2 Location { get; set; }
         public float Rotation { get; set; }
-
-        public Rectangle Bounds { get; set; }
 
         private Matrix transformMatrix
         {
             get
             {
                 return
-                   Matrix.CreateTranslation(new Vector3(-followable.Position.X, -followable.Position.Y, 0)) *
-                   Matrix.CreateRotationZ(0) *
-                   Matrix.CreateScale(zoom) *
-                   Matrix.CreateTranslation(new Vector3(Bounds.Width * 0.5f, Bounds.Height * 0.5f, 0));
+                   Matrix.CreateTranslation(new Vector3(-followable.Position.X - 16, -followable.Position.Y -16, 0)) *         //Hardcoded +16 is added because the sprites are 32x32 and we want the camera centered on the tile
+                                            Matrix.CreateRotationZ(0) *
+                                            Matrix.CreateScale(zoom) *
+                                            Matrix.CreateTranslation(new Vector3(viewport.Width * 0.5f, viewport.Height * 0.5f, 0));
             }
         }
+
+        public Matrix TransformMatrix { get { return transformMatrix; } }
 
         public static Camera Primary
         {
@@ -36,15 +36,11 @@ namespace Rogue
             set;
         }
 
-        public Camera(SpriteBatch spriteBatch)
+        public Camera(SpriteBatch spriteBatch, Viewport viewport)
         {
             this.spriteBatch = spriteBatch;
-        }
-
-        public Camera(SpriteBatch spriteBatch, float zoom)
-        {
-            this.spriteBatch = spriteBatch;
-            this.zoom = zoom;
+            this.viewport = viewport;
+            zoom = 1f;
         }
 
         public void Follow(GameObject gameObject)
@@ -52,22 +48,18 @@ namespace Rogue
             followable = gameObject;
         }
 
-        public void Update() //Should be called on games update function
-        {
-            //followable = gameObject;
-        }
-
-        public void DrawTerrain(SpriteBatch spriteBatch)
+        public void DrawTerrain()
         {
             Terrain[,] terrain = RogueGame.LoadedWorldScene.Terrain;
+
             for (int x = 0; x < terrain.GetLength(0); x++)
             {
                 for (int y = 0; y < terrain.GetLength(1); y++)
                 {
-                   
+                    AnimationEngine.SpriteBatch.Draw(terrain[x,y].Texture2D, new Rectangle(new Point(x * 32, y * 32), new Point(32, 32)), Color.White);
                 }
             }
-                
+
         }
     }
 }
