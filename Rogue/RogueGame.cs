@@ -18,7 +18,6 @@ namespace Rogue
         private GameObject player;
 
         public static WorldScene LoadedWorldScene;
-        public static ContentManager Content2 { get => content2; set => content2 = value; }
 
         public RogueGame()
         {
@@ -34,8 +33,6 @@ namespace Rogue
         /// </summary>
         protected override void Initialize()
         {
-            // TODO: Add your initialization logic here
-            //ContentHelper.Initialize();
             AnimationEngine.Initialize();
             base.Initialize();
         }
@@ -130,7 +127,7 @@ namespace Rogue
             spriteBatch.End();
 
             base.Draw(gameTime);
-            AnimationEngine.Update(gameTime); //Pass the gametime to the AnimationEngine which then determines if any animation frames need to be advanced
+            AnimationEngine.Update(gameTime); //Pass the gametime to the animationengine which then determines if any animation frames need to be advanced
         }
 
     }

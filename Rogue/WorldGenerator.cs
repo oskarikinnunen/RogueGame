@@ -43,7 +43,7 @@ namespace Rogue
 
         public static void Initialize ()
         {
-            terrains = new List<Terrain>{new Terrain(TerrainType.Stone, "Terrain/Grass1"), //TODO: Do anything else than this
+            terrains = new List<Terrain>{new Terrain(TerrainType.Stone, "Terrain/Grass1"), //TODO: Do anything else than this, eg. Save terrain attributes to JSON or XML
                                          new Terrain(TerrainType.Grass, "Terrain/Grass2"),
                                          new Terrain(TerrainType.Void, "Terrain/Stone1") };
         }

@@ -5,7 +5,7 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace Rogue
 {
-    public class Camera
+    public class Camera //TODO: Add method that draws all AnimatedTexture2Ds in view
     {
         private float zoom;
         private GameObject followable;
