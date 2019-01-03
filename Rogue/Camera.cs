@@ -56,10 +56,23 @@ namespace Rogue
             {
                 for (int y = 0; y < terrain.GetLength(1); y++)
                 {
-                    AnimationEngine.SpriteBatch.Draw(terrain[x,y].Texture2D, new Rectangle(new Point(x * 32, y * 32), new Point(32, 32)), Color.White);
+                    Debug.WriteLine(terrain[x, y].Depth);
+                    Color depthColor = MultiplyColor(Color.White, terrain[x, y].Depth);
+                    AnimationEngine.SpriteBatch.Draw(terrain[x,y].Texture2D, new Rectangle(new Point(x * 32, y * 32), new Point(32, 32)), depthColor);
                 }
             }
 
+        }
+
+        private Color MultiplyColor (Color c, double d)
+        {
+            //Debug.WriteLine(d);
+            float f = (float)d;
+            //Debug.WriteLine(f);
+            c.R = (byte)(c.R *f);
+            c.G = (byte)(c.G * f);
+            c.B = (byte)(c.B * f);
+            return c;
         }
     }
 }

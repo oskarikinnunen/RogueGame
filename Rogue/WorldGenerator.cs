@@ -23,9 +23,11 @@ namespace Rogue
         private TerrainType terrainType;
         private string path;
         private Texture2D texture2D;
+        private double depth;
 
         public TerrainType TerrainType { get => terrainType; set => terrainType = value; }
         public string Path { get => path; set => path = value; }
+        public double Depth { get => depth; set => depth = value; }
         public Texture2D Texture2D { get => texture2D; set => texture2D = value; }
 
         
@@ -92,6 +94,8 @@ namespace Rogue
                 {
                     terrain[x, y] = ContentHelper.Terrains[(int)(perl.GetValue((int)x, (int)y, 0.0) + 1.0)];
                     terrain[x, y].Texture2D = ContentHelper.TerrainTexture(terrain[x, y].TerrainType);
+                    terrain[x, y].Depth = (perl.GetValue(x, y, 0.0) + 1) / 2;
+                    //Debug.WriteLine(terrain[x, y].Depth);
                 }
             }
             worldScene.SetTerrain(terrain);
