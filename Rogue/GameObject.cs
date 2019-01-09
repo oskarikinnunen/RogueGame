@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 
 namespace Rogue
 {
+    [Serializable]
     public class GameObject
     {
         private Vector2 position;

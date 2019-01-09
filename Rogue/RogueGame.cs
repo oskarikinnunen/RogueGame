@@ -48,16 +48,19 @@ namespace Rogue
             
             spriteBatch = new SpriteBatch(GraphicsDevice); // Create a new SpriteBatch, which can be used to draw textures. 
             AnimationEngine.SpriteBatch = spriteBatch;
-
-            LoadedWorldScene = WorldGenerator.GeneratePlain(new Vector2(100f, 100f)); //Needs to be added before any gameobjects since they are added to LoadedWorldScene
-
+            
+            LoadedWorldScene = WorldGenerator.NormalTerrain(new Vector2(30f, 30f)); //Needs to be added before any gameobjects since they are added to LoadedWorldScene
+            
+            //Initialize Player related objects etc.
             Texture2D playerSprite = Content.Load<Texture2D>("HeroSheet1");
             playerAnim = new AnimatedTexture2D(playerSprite, 32);
             playerAnim.PingPong = true;
-            player = new GameObject(new Vector2(50, 50) * 32, playerAnim);
+            player = new GameObject(new Vector2((int)LoadedWorldScene.Terrain.GetLength(0) / 2, (int)LoadedWorldScene.Terrain.GetLength(0) / 2) * 32, playerAnim);
 
+            //Init Camera
             Camera.Primary = new Camera(spriteBatch, graphics.GraphicsDevice.Viewport);
             Camera.Primary.Follow(player);
+            Coroutines.Start(Camera.Primary.InventoryZoom());
         }
 
         /// <summary>
@@ -80,8 +83,18 @@ namespace Rogue
 
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
                 Exit();
-          
-            if (Input.KeyPushed(Keys.Left)) {       //TODO: Make a CheckInput method
+
+            CheckMovement();
+
+
+            Coroutines.Enumerate(gameTime);
+            base.Update(gameTime);
+        }
+
+        private void CheckMovement()
+        {
+            if (Input.KeyPushed(Keys.Left))
+            {       //TODO: Make a CheckInput method
                 player.Position += new Vector2(-32f, 0f);
             }
             else if (Input.KeyPushed(Keys.Right))
@@ -106,10 +119,7 @@ namespace Rogue
             {
                 Camera.Primary.Zoom += 0.5f;
             }
-
-            base.Update(gameTime);
         }
-
         /// <summary>
         /// This is called when the game should draw itself.
         /// </summary>

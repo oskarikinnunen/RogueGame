@@ -5,6 +5,11 @@ VisualStudioVersion = 15.0.28010.2036
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Rogue", "Rogue\Rogue.csproj", "{6237EEB8-E20E-4F28-A6B5-F2CD73B5820F}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{65867D11-5FA0-4FD1-9AA8-8BFE88EF63CF}"
+	ProjectSection(SolutionItems) = preProject
+		Rogue\Content\HeroSheet1 – kopio.png = Rogue\Content\HeroSheet1 – kopio.png
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x86 = Debug|x86

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Diagnostics;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -11,6 +12,7 @@ namespace Rogue
         private GameObject followable;
         private SpriteBatch spriteBatch;
         private Viewport viewport;
+        private Vector3 offset;
         
         public float Zoom { get => zoom; set => zoom = value; }
         public Vector2 Location { get; set; }
@@ -21,7 +23,7 @@ namespace Rogue
             get
             {
                 return
-                   Matrix.CreateTranslation(new Vector3(-followable.Position.X - 16, -followable.Position.Y -16, 0)) *         //Hardcoded +16 is added because the sprites are 32x32 and we want the camera centered on the tile
+                   Matrix.CreateTranslation((new Vector3(-followable.Position.X - 16, -followable.Position.Y -16, 0)) + offset) *         //Hardcoded +16 is added because the sprites are 32x32 and we want the camera centered on the tile
                                             Matrix.CreateRotationZ(0) *
                                             Matrix.CreateScale(zoom) *
                                             Matrix.CreateTranslation(new Vector3(viewport.Width * 0.5f, viewport.Height * 0.5f, 0));
@@ -41,6 +43,19 @@ namespace Rogue
             this.spriteBatch = spriteBatch;
             this.viewport = viewport;
             zoom = 1f;
+            offset = Vector3.Zero;
+        }
+
+        public IEnumerator InventoryZoom()
+        {
+            int time = 0;
+            while (time < 10)
+            {
+                time++;
+                Debug.WriteLine(time);
+                yield return null;
+            }
+            Debug.WriteLine(time + "ended");
         }
 
         public void Follow(GameObject gameObject)
@@ -51,27 +66,27 @@ namespace Rogue
         public void DrawTerrain()
         {
             Terrain[,] terrain = RogueGame.LoadedWorldScene.Terrain;
-
+            //Debug.WriteLine(terrain[0, 13].Depth);
             for (int x = 0; x < terrain.GetLength(0); x++)
             {
                 for (int y = 0; y < terrain.GetLength(1); y++)
                 {
-                    Debug.WriteLine(terrain[x, y].Depth);
-                    Color depthColor = MultiplyColor(Color.White, terrain[x, y].Depth);
-                    AnimationEngine.SpriteBatch.Draw(terrain[x,y].Texture2D, new Rectangle(new Point(x * 32, y * 32), new Point(32, 32)), depthColor);
+                    //Debug.WriteLine(terrain[x, y].Depth);
+                    //Color depthColor = MultiplyColor(Color.White, terrain[x,y].Depth);
+                    AnimationEngine.SpriteBatch.Draw(terrain[x,y].Texture2D, new Rectangle(new Point(x * 32, y * 32), new Point(32, 32)), Color.White);
                 }
             }
-
+            //AnimationEngine.SpriteBatch.DrawString(spriteFont, )
         }
 
         private Color MultiplyColor (Color c, double d)
         {
             //Debug.WriteLine(d);
             float f = (float)d;
-            //Debug.WriteLine(f);
-            c.R = (byte)(c.R *f);
-            c.G = (byte)(c.G * f);
-            c.B = (byte)(c.B * f);
+            double R = c.R *d;
+            //Debug.WriteLine(R);
+            c.G = (byte)(c.G *d);
+            c.B = (byte)(c.B *d);
             return c;
         }
     }

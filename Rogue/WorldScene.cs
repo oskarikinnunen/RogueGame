@@ -10,13 +10,12 @@ namespace Rogue
     [Serializable()]
     public class WorldScene
     {
-
         private Vector2 size;
         private List<GameObject> gameObjects;
         private Terrain[,] terrain;
 
         public Terrain[,] Terrain { get => terrain; }
-
+        
         public WorldScene(Vector2 size)
         {
             gameObjects = new List<GameObject>();
@@ -31,6 +30,19 @@ namespace Rogue
         public void AddGameObject(GameObject gameObject)
         {
             gameObjects.Add(gameObject);
+        }
+
+        public GameObject GetObjectInPosition (Vector2 v2)
+        {
+            GameObject match = null;
+            foreach (GameObject go in gameObjects)
+            {
+                if (go.Position == v2)
+                {
+                    match = go;
+                }
+            }
+            return match;
         }
     }
 }

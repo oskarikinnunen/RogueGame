@@ -36,7 +36,6 @@ namespace Rogue
             this.terrainType = terrainType;
             this.path = path;
         }
-
     }
 
     public static class ContentHelper
@@ -47,15 +46,12 @@ namespace Rogue
         {
             terrains = new List<Terrain>{new Terrain(TerrainType.Stone, "Terrain/Grass1"), //TODO: Do anything else than this, eg. Save terrain attributes to JSON or XML
                                          new Terrain(TerrainType.Grass, "Terrain/Grass2"),
-                                         new Terrain(TerrainType.Void, "Terrain/Stone1") };
+                                         new Terrain(TerrainType.Void, "Terrain/Stone1")};
         }
 
         public static List<Terrain> Terrains
         {
-            get
-            {
-                return terrains;
-            }
+            get { return terrains ; }
         }
 
         public static Texture2D TerrainTexture(TerrainType terrainType)
@@ -75,40 +71,34 @@ namespace Rogue
             for (int i = 0; i < Enum.GetNames(typeof(TerrainType)).Length; i++)
             {
                 terrains[i].Texture2D = contentManager.Load<Texture2D>(terrains[i].Path);
-                Debug.WriteLine(i);
             }
         }
     }
 
     public static class WorldGenerator
     {
-        public static WorldScene GeneratePlain (Vector2 size)
+        public static WorldScene NormalTerrain (Vector2 size)
         {
             Terrain[,] terrain = new Terrain[(int)size.X, (int)size.Y];
             WorldScene worldScene = new WorldScene(size);
-            Perlin perl = new Perlin(3.2,noiseQuality: NoiseQuality.High);
-            
-            for (int x = 0; x < terrain.GetLength(0); x++)
+            Perlin perl = new Perlin(5.5,noiseQuality: NoiseQuality.High);
+            Debug.WriteLine(size + "size");
+            for (int x = 0; x < size.X; x++)
             {
-                for (int y = 0; y < terrain.GetLength(1); y++)
+                for (int y = 0; y < size.Y; y++)
                 {
-                    terrain[x, y] = ContentHelper.Terrains[(int)(perl.GetValue((int)x, (int)y, 0.0) + 1.0)];
-                    terrain[x, y].Texture2D = ContentHelper.TerrainTexture(terrain[x, y].TerrainType);
-                    terrain[x, y].Depth = (perl.GetValue(x, y, 0.0) + 1) / 2;
-                    //Debug.WriteLine(terrain[x, y].Depth);
+                    double noiseValue = perl.GetValue(x, y, 0.0);
+                    terrain[x,y] = ContentHelper.Terrains[(int)(noiseValue + 1.0)]; // -1 to 1 Range to 0-2 range
+                    terrain[x,y].Depth = (noiseValue + 1) / 2; //-1 to 1 range to 0-1 range, This thing is possessed, don't touch
+                    //terrain[x, y].Depth = 2.12124124124142124;s
+                    Debug.WriteLine("Coordinates: " + x + "," + y + " --> " + terrain[x,y].Depth);
                 }
+                //Debug.WriteLine(terrain[x, 0].Depth);
             }
+
             worldScene.SetTerrain(terrain);
             return worldScene;
         }
-
-        private static Terrain RandomTerrain ()
-        {
-            Random randomseed = new Random();
-            Random random = new Random();
-            return ContentHelper.Terrains[random.Next(0, 2)];
-        }
-
         
     }
 }

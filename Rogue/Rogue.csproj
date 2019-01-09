@@ -44,6 +44,10 @@
     <Compile Include="AnimatedTexture2D.cs" />
     <Compile Include="AnimationEngine.cs" />
     <Compile Include="Camera.cs" />
+    <Compile Include="Coroutine.cs" />
+    <Compile Include="CoroutineAnimations.cs" />
+    <Compile Include="Item.cs" />
+    <Compile Include="PlayerActions.cs" />
     <Compile Include="RogueGame.cs" />
     <Compile Include="GameObject.cs" />
     <Compile Include="Input.cs" />
@@ -104,8 +108,8 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Content\HeroSheet0.png" />
-    <Content Include="Content\HeroSheet1.png" />
     <Content Include="Content\Terrain\Grass0 - Copy.png" />
+    <Content Include="Content\HeroSheet1.png" />
     <Content Include="Content\Terrain\Stone0 - Copy.png" />
     <Content Include="Content\Terrain\Void0 - Copy.png" />
     <Content Include="Icon.ico" />
