@@ -26,15 +26,15 @@ namespace Rogue
             KeyValuePair<Keys, bool>[] oldKeyStates = keyStates;
             keyStates = new KeyValuePair<Keys, bool>[Enum.GetValues(typeof(Keys)).Length];
 
-            for (int i = 0; i < Enum.GetValues(typeof(Keys)).Length; i++ )
+            for (int i = 0; i < Enum.GetValues(typeof(Keys)).Length; i++)
             {
-                
+
                 Keys current = (Keys)i;
                 keyStates[i] = new KeyValuePair<Keys, bool>(current, keyboardState.IsKeyDown(current));
 
                 if (oldKeyStates[i].Value == false && keyStates[i].Value == true) //if this key was not pressed the previous frame and is pressed this frame
-                {                                                                    //,
-                    thisFramePushedKeys.Add(current);                                //add it to the list
+                {                                                                 //,
+                    thisFramePushedKeys.Add(current);                             //add it to the list
                 }
             }
         }

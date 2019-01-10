@@ -52,6 +52,20 @@ namespace Rogue
             t.OnAddToGameObject(this);
         }
 
+        public Drawable DrawableComponent
+        {
+            get
+            {
+                foreach (Component comp in Components)
+                {
+                    Drawable d = comp as Drawable;
+                    if (d != null)
+                        return d;
+                }
+                return null;
+            }
+        }
+
     }
 
     public abstract class Component //TODO: Move to own file
@@ -60,4 +74,10 @@ namespace Rogue
 
         public abstract void OnAddToGameObject(GameObject gameObject);
     }
+
+    public interface Drawable
+    {
+        void Draw();
+    }
+
 }

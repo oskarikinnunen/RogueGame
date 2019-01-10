@@ -10,9 +10,6 @@ namespace Rogue
     /// </summary>
     public static class AnimationEngine
     {
-        //private AnimationEngine main;
-        //public AnimationEngine Main { get => main; set => main = value; }
-
         private static List<AnimatedTexture2D> animatedTextures;
         private static GameTime gameTime;
         private static SpriteBatch spriteBatch;

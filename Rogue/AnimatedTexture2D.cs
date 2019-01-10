@@ -7,7 +7,7 @@ namespace Rogue
     /// <summary>
     /// Class for playing back horizontally laid out spritesheets.
     /// </summary>
-    public class AnimatedTexture2D : Component
+    public class AnimatedTexture2D : Component, Drawable
     {
         private GameObject worldObject;
 

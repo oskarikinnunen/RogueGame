@@ -96,8 +96,10 @@
     <Compile Include="Libraries\LibNoise\Voronoi.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="UI.cs" />
     <Compile Include="WorldGenerator.cs" />
     <Compile Include="WorldScene.cs" />
+    <Compile Include="XNAExtensions.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="MonoGame.Framework">

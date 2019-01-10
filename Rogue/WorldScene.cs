@@ -15,6 +15,7 @@ namespace Rogue
         private Terrain[,] terrain;
 
         public Terrain[,] Terrain { get => terrain; }
+        public List<GameObject> GameObjects { get => gameObjects; }
         
         public WorldScene(Vector2 size)
         {

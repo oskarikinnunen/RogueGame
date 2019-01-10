@@ -11,13 +11,21 @@ namespace Rogue
     /// </summary>
     public class RogueGame : Game
     {
-        private GraphicsDeviceManager graphics;
+        private static GraphicsDeviceManager graphics;
         private SpriteBatch spriteBatch;
+        private static SpriteBatch uiSpriteBatch;
         private static ContentManager content2;
         private AnimatedTexture2D playerAnim;
         private GameObject player;
+        private Vector2 mouseScreenPos;
+
+        public static GraphicsDeviceManager Graphics { get => graphics; }
+
+        public static SpriteFont SprFont;
 
         public static WorldScene LoadedWorldScene;
+
+        public static SpriteBatch UISpriteBatch { get => uiSpriteBatch; }
 
         public RogueGame()
         {
@@ -48,14 +56,23 @@ namespace Rogue
             
             spriteBatch = new SpriteBatch(GraphicsDevice); // Create a new SpriteBatch, which can be used to draw textures. 
             AnimationEngine.SpriteBatch = spriteBatch;
+
+            //UI
+            uiSpriteBatch = new SpriteBatch(GraphicsDevice);
+            UI.InitializeTextures();
+
+            SprFont = Content.Load<SpriteFont>("Default");
             
-            LoadedWorldScene = WorldGenerator.NormalTerrain(new Vector2(30f, 30f)); //Needs to be added before any gameobjects since they are added to LoadedWorldScene
+            LoadedWorldScene = WorldGenerator.NormalTerrain(new Vector2(10f, 10f)); //Needs to be added before any gameobjects since they are added to LoadedWorldScene
             
             //Initialize Player related objects etc.
             Texture2D playerSprite = Content.Load<Texture2D>("HeroSheet1");
+
             playerAnim = new AnimatedTexture2D(playerSprite, 32);
             playerAnim.PingPong = true;
-            player = new GameObject(new Vector2((int)LoadedWorldScene.Terrain.GetLength(0) / 2, (int)LoadedWorldScene.Terrain.GetLength(0) / 2) * 32, playerAnim);
+
+            Vector2 worldCenter = new Vector2(LoadedWorldScene.Terrain.GetLength(0) / 2, LoadedWorldScene.Terrain.GetLength(0) / 2) * 32;
+            player = new GameObject(worldCenter, playerAnim);
 
             //Init Camera
             Camera.Primary = new Camera(spriteBatch, graphics.GraphicsDevice.Viewport);
@@ -81,11 +98,14 @@ namespace Rogue
         {
             Input.Update(Keyboard.GetState());
 
+            
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
                 Exit();
 
             CheckMovement();
 
+            MouseState mState = Mouse.GetState();
+            mouseScreenPos = mState.Position.ToVector2();
 
             Coroutines.Enumerate(gameTime);
             base.Update(gameTime);
@@ -119,6 +139,7 @@ namespace Rogue
             {
                 Camera.Primary.Zoom += 0.5f;
             }
+            
         }
         /// <summary>
         /// This is called when the game should draw itself.
@@ -126,16 +147,35 @@ namespace Rogue
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Draw(GameTime gameTime)
         {
-
+            //Game drawing
             GraphicsDevice.Clear(Color.Black);
 
             spriteBatch.Begin(SpriteSortMode.FrontToBack,BlendState.AlphaBlend,SamplerState.PointClamp,null,RasterizerState.CullCounterClockwise,null,Camera.Primary.TransformMatrix);
 
             Camera.Primary.DrawTerrain();
-            playerAnim.Draw();
+            Camera.Primary.DrawGameObjects();
+            //Mouse To World testing
+            //GameObject go = new GameObject(Vector2.Zero);
+            //AnimatedTexture2D
+
+            //playerAnim.Draw(); //TODO: Call this in cameras draw method
 
             spriteBatch.End();
 
+
+            //UI
+            uiSpriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend);
+
+            Vector2 textLocation = new Vector2(0f, graphics.GraphicsDevice.Viewport.Height - 20f);
+            
+            UI.DrawBoxForString(textLocation, "Test String drawing");
+            UI.DrawStringOnScreen(textLocation, "Test String drawing");
+
+            UI.DrawBox(mouseScreenPos, new Vector2(2f, 2f));
+
+            uiSpriteBatch.End();
+
+            //Gametime reliant update calls
             base.Draw(gameTime);
             AnimationEngine.Update(gameTime); //Pass the gametime to the animationengine which then determines if any animation frames need to be advanced
         }

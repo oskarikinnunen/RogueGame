@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Diagnostics;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Rogue.XNAExtensions;
 
 namespace Rogue
 {
@@ -63,6 +65,19 @@ namespace Rogue
             followable = gameObject;
         }
 
+        public void DrawGameObjects ()
+        {
+            List<GameObject> list = RogueGame.LoadedWorldScene.GameObjects;
+            foreach (GameObject go in list)
+            {
+                Drawable drComponent = go.DrawableComponent;
+                if (drComponent != null)
+                {
+                    drComponent.Draw();
+                }
+            }
+        }
+
         public void DrawTerrain()
         {
             Terrain[,] terrain = RogueGame.LoadedWorldScene.Terrain;
@@ -73,21 +88,10 @@ namespace Rogue
                 {
                     //Debug.WriteLine(terrain[x, y].Depth);
                     //Color depthColor = MultiplyColor(Color.White, terrain[x,y].Depth);
-                    AnimationEngine.SpriteBatch.Draw(terrain[x,y].Texture2D, new Rectangle(new Point(x * 32, y * 32), new Point(32, 32)), Color.White);
+                    AnimationEngine.SpriteBatch.Draw(terrain[x,y].Texture2D, new Rectangle(new Point(x * 32, y * 32), new Point(32, 32)), Color.Brown.Multiply(4f));
                 }
             }
             //AnimationEngine.SpriteBatch.DrawString(spriteFont, )
-        }
-
-        private Color MultiplyColor (Color c, double d)
-        {
-            //Debug.WriteLine(d);
-            float f = (float)d;
-            double R = c.R *d;
-            //Debug.WriteLine(R);
-            c.G = (byte)(c.G *d);
-            c.B = (byte)(c.B *d);
-            return c;
         }
     }
 }

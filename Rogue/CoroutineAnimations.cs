@@ -8,6 +8,6 @@ namespace Rogue
 {
     public static class CoroutineAnimations
     {
-
+        
     }
 }
